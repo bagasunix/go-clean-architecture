@@ -1,7 +1,7 @@
 server:
   port: 8080
-  time_zone: "AsiaAsia/Jakarta"
-  ssl_mode: false
+  time_zone: "Asia/Jakarta"
+  prefork: false
 
 database:
   driver: postgres
@@ -13,6 +13,7 @@ database:
   max_connection: 300
   max_idle: 300
   max_life: 5m
+  ssl_mode: disable
 
 general:
   app_name: GoCleanArchitecture

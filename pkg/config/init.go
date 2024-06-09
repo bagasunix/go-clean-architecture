@@ -10,8 +10,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var Config *Cfg
-
 type Cfg struct {
 	Server   Server   `yaml:"server"`
 	Database Database `yaml:"database"`
@@ -19,9 +17,8 @@ type Cfg struct {
 }
 
 type Server struct {
-	Port     int    `yaml:"port"`
+	Port     string `yaml:"port"`
 	Timezone string `yaml:"time_zone"`
-	SSLMode  string `yaml:"sll_mode"`
 }
 
 type Database struct {
@@ -31,8 +28,9 @@ type Database struct {
 	User            string        `yaml:"user"`
 	Port            string        `yaml:"port"`
 	Password        string        `yaml:"password"`
-	MaxConn         int           `yaml:"max_connection"`
-	MaxIdle         int           `yaml:"max_idle"`
+	SSLMode         string        `yaml:"ssl_mode"`
+	MaxOpenConn     int           `yaml:"max_connection"`
+	MaxIdleConn     int           `yaml:"max_idle"`
 	ConnMaxLifetime time.Duration `yaml:"max_life"`
 }
 
@@ -40,13 +38,14 @@ type General struct {
 	CurrentLanguage string `yaml:"current_language"`
 	AppName         string `yaml:"app_name"`
 	AppVersion      string `yaml:"app_version"`
+	Prefork         bool   `ymai:"prefork"`
 	Env             string
 }
 
 //go:embed *
 var files embed.FS
 
-func (c *Cfg) SetDefault() {
+func (c *Cfg) SetDefault() *Cfg {
 	if os.Getenv("DATABASE_HOST") != "" {
 		c.Database.Host = os.Getenv("DATABASE_HOST")
 	}
@@ -59,19 +58,24 @@ func (c *Cfg) SetDefault() {
 	if os.Getenv("DATABASE_PASSWORD") != "" {
 		c.Database.Password = os.Getenv("DATABASE_PASSWORD")
 	}
+	if os.Getenv("PORT") != "" {
+		c.Database.Password = os.Getenv("PORT")
+	}
+	return c
 }
 
-func InitConfig(ctx context.Context, log *zap.Logger) {
+func InitConfig(ctx context.Context, log *zap.Logger) *Cfg {
 	var data []byte
-
 	bytes, err := files.ReadFile("config.yaml")
 	if err != nil {
 		log.Fatal("error when load config: ", zap.Error(err))
 	}
 	data = bytes
-	err = yaml.Unmarshal(data, &Config)
+	config := new(Cfg)
+	err = yaml.Unmarshal(data, config)
 	if err != nil {
 		log.Fatal("error when unmarshal config: ", zap.Error(err))
 	}
-	Config.SetDefault()
+
+	return config.SetDefault()
 }

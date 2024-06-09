@@ -1,4 +1,4 @@
-package responses
+package models
 
 type BaseResponse[T any] struct {
 	Data   T             `json:"data"`
