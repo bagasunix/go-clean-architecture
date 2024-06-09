@@ -1,0 +1,18 @@
+server:
+  port: 8080
+  time_zone: "AsiaAsia/Jakarta"
+
+database:
+  driver: postgres
+  host: 127.0.0.1
+  port: 5432
+  db_name: go_clean
+  user: project_dev
+  password: project_dev_password
+  max_connection: 300
+  max_idle: 300
+  max_life: 5m
+
+general:
+  app_name: GoCleanArchitecture
+  app_version: v0.0.1
