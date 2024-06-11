@@ -19,6 +19,7 @@ type Cfg struct {
 type Server struct {
 	Port    string `yaml:"port"`
 	Prefork bool   `ymai:"prefork"`
+	Env     string `yaml:"env"`
 }
 
 type Database struct {
@@ -38,7 +39,6 @@ type General struct {
 	CurrentLanguage string `yaml:"current_language"`
 	AppName         string `yaml:"app_name"`
 	AppVersion      string `yaml:"app_version"`
-	Env             string
 	Timezone        string `yaml:"time_zone"`
 }
 
