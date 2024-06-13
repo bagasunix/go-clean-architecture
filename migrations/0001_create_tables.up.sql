@@ -2,8 +2,11 @@ CREATE TABLE "user" (
   "id" uuid PRIMARY KEY,
   "username" varchar,
   "full_name" varchar,
+  "sex" int,
   "email" varchar,
   "password" varchar,
+  "is_active" int,
+  "is_login" int,
   "created_at" timestamp
 );
 
@@ -15,6 +18,8 @@ CREATE TABLE "customer" (
   "hp" varchar UNIQUE,
   "email" varchar,
   "sex" int,
+  "is_active" int,
+  "is_login" int,
   "created_by" uuid,
   "created_at" timestamp
 );
