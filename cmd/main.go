@@ -1,9 +1,7 @@
 package main
 
-import (
-	"github.com/bagasunix/go-clean-architecture/internal/configs"
-)
+import "github.com/bagasunix/go-clean-architecture/cmd/inits"
 
 func main() {
-	configs.Run()
+	inits.Run()
 }

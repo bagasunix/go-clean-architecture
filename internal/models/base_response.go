@@ -9,7 +9,7 @@ var cfg *config.Cfg
 
 type BaseResponse[T any] struct {
 	Message string        `json:"message"`
-	Data    T             `json:"data"`
+	Data    *T            `json:"data"`
 	Paging  *PageMetadata `json:"paging,omitempty"`
 	Errors  string        `json:"errors,omitempty"`
 }
@@ -21,13 +21,13 @@ type PageMetadata struct {
 	TotalPage int64 `json:"total_page"`
 }
 
-func WriteResponse(ctx *fiber.Ctx, resp BaseResponse[any], statusCode int) {
+func WriteResponse[T any](ctx *fiber.Ctx, resp BaseResponse[T], statusCode int) error {
 	if resp.Errors != "" {
 		if cfg.Server.Env != "dev" {
 			resp.Data = nil
 		}
-		ctx.Status(statusCode).JSON(resp)
+		return ctx.Status(statusCode).JSON(resp)
 	} else {
-		ctx.Status(statusCode).JSON(resp)
+		return ctx.Status(statusCode).JSON(resp)
 	}
 }
