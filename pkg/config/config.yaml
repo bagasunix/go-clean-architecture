@@ -1,7 +1,8 @@
 server:
-  port: 8080
+  port: 8088
   prefork: false
   env: dev
+  version_api: /api/v1
 
 database:
   driver: postgres

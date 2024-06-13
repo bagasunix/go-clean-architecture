@@ -20,6 +20,7 @@ type Server struct {
 	Port    string `yaml:"port"`
 	Prefork bool   `ymai:"prefork"`
 	Env     string `yaml:"env"`
+	Version string `yaml:"version_api"`
 }
 
 type Database struct {
