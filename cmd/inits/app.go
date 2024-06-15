@@ -18,17 +18,19 @@ type SetupAppConfig struct {
 	Cfg *config.Cfg
 }
 
-func SetupApp(cfg *SetupAppConfig) *http.RouteConfig {
+func SetupApp(app *SetupAppConfig) *http.RouteConfig {
 	// setup repositories
-	userRepository := repositories.New(cfg.Log, cfg.DB)
+	userRepository := repositories.New(app.Log, app.DB)
 	// setup use cases
-	userUseCase := usecases.NewUser(cfg.Log, userRepository)
+	userUseCase := usecases.NewUser(app.Log, userRepository)
 	// setup controller
-	userController := controllers.NewUserController(userUseCase, cfg.Log)
+	userController := controllers.NewUserController(userUseCase, app.Cfg, app.Log)
+	welcomeController := controllers.NewWelcomeController(app.Cfg)
 
 	return &http.RouteConfig{
-		App:            cfg.App,
-		UserController: userController,
-		Cfg:            cfg.Cfg,
+		App:               app.App,
+		UserController:    userController,
+		WelcomeController: welcomeController,
+		Cfg:               app.Cfg,
 	}
 }

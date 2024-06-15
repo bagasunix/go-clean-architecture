@@ -11,6 +11,7 @@ type User struct {
 	FullName  string    `gorm:"column:full_name"`
 	Sex       int       `gorm:"column:sex"`
 	Email     string    `gorm:"column:email;uniqueIndex"`
+	Username  string    `gorm:"column:username"`
 	Password  string    `gorm:"column:password"`
 	IsActive  int
 	IsLogin   int

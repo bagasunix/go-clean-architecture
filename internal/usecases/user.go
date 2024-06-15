@@ -7,6 +7,7 @@ import (
 	"github.com/bagasunix/go-clean-architecture/internal/entities"
 	"github.com/bagasunix/go-clean-architecture/internal/models"
 	"github.com/bagasunix/go-clean-architecture/internal/repositories"
+	"github.com/bagasunix/go-clean-architecture/pkg/config"
 	"github.com/bagasunix/go-clean-architecture/pkg/errors"
 	"github.com/bagasunix/go-clean-architecture/pkg/helpers"
 	"github.com/gofiber/fiber/v2"
@@ -19,27 +20,27 @@ type UserEndpoint interface {
 type userUseCase struct {
 	repo   repositories.Repositories
 	logger *zap.Logger
+	Cfg    *config.Cfg
 }
 
 // CreateUser implements UserEndpoint.
 func (u *userUseCase) CreateUser(ctx *fiber.Ctx, req *models.CreateUser) (response *models.BaseResponse[models.ResponseUser], err error) {
 	responseBuilder := new(models.BaseResponse[models.ResponseUser])
 	if req.Validate() != nil {
+		responseBuilder.Code = fiber.StatusBadRequest
 		responseBuilder.Message = "Validasi error"
-		responseBuilder.Errors = req.Validate().Error()
-		response := models.WriteResponse(ctx, *responseBuilder, 400)
-		return responseBuilder, response
+		return responseBuilder, req.Validate()
 	}
 
 	checkEmail := u.repo.GetUser().GetByEmail(ctx.Context(), req.Email)
 	if checkEmail.Value.Email == req.Email {
+		responseBuilder.Code = fiber.StatusConflict
 		responseBuilder.Message = "Email sudah terdaftar"
-		responseBuilder.Errors = "email " + errors.ERR_ALREADY_EXISTS
 		return responseBuilder, errors.CustomError("email " + errors.ERR_ALREADY_EXISTS)
 	}
 	if checkEmail.Error != nil {
+		responseBuilder.Code = fiber.StatusConflict
 		responseBuilder.Message = "Validasi email invalid"
-		responseBuilder.Errors = checkEmail.Error.Error()
 		return responseBuilder, checkEmail.Error
 	}
 
@@ -49,9 +50,9 @@ func (u *userUseCase) CreateUser(ctx *fiber.Ctx, req *models.CreateUser) (respon
 	case "perempuan":
 		req.Sex = "0"
 	default:
+		responseBuilder.Code = fiber.StatusConflict
 		responseBuilder.Message = "Jenis kelamin tidak valid"
-		responseBuilder.Errors = "sex " + errors.ERR_INVALID_KEY
-		return responseBuilder, err
+		return responseBuilder, errors.ErrInvalidAttributes("sex")
 	}
 
 	intSex, _ := strconv.Atoi(req.Sex)
@@ -64,12 +65,12 @@ func (u *userUseCase) CreateUser(ctx *fiber.Ctx, req *models.CreateUser) (respon
 	entityBuild.IsActive = 1
 
 	if err = u.repo.GetUser().Create(ctx.Context(), entityBuild); err != nil {
+		responseBuilder.Code = fiber.StatusConflict
 		responseBuilder.Message = "Gagal membuat pengguna"
-		responseBuilder.Errors = err.Error()
 		return responseBuilder, err
 	}
 
-	mBuild := &models.ResponseUser{}
+	mBuild := new(models.ResponseUser)
 	mBuild.ID = entityBuild.ID
 	mBuild.FullName = entityBuild.FullName
 	mBuild.Email = entityBuild.Email
@@ -82,6 +83,7 @@ func (u *userUseCase) CreateUser(ctx *fiber.Ctx, req *models.CreateUser) (respon
 	mBuild.IsActive = entityBuild.IsActive
 	mBuild.CreatedAt = entityBuild.CreatedAt
 
+	responseBuilder.Code = fiber.StatusCreated
 	responseBuilder.Message = "User berhasil dibuat"
 	responseBuilder.Data = mBuild
 	return responseBuilder, err
