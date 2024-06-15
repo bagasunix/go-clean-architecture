@@ -1,6 +1,7 @@
 # Golang Clean Architecture
 ## Description
 ## Architecture
+![Clean Architecture](architecture.png)
 ## Tech Stack
 - Golang : https://github.com/golang/go
 - Postgres (Database) : https://github.com/postgres/postgres
