@@ -1,0 +1,22 @@
+server:
+  port: 8088
+  prefork: false
+  env: dev
+  version_api: /api/v1
+
+database:
+  driver: postgres
+  host: 127.0.0.1
+  port: 5432
+  db_name: go_clean
+  user: project_dev
+  password: project_dev_password
+  max_connection: 300
+  max_idle: 300
+  max_life: 5m
+  ssl_mode: disable
+
+general:
+  app_name: GoCleanArchitecture
+  app_version: v0.0.1
+  time_zone: "Asia/Jakarta"
