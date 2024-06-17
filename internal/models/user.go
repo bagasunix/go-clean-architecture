@@ -13,6 +13,7 @@ import (
 type CreateUser struct {
 	FullName string `json:"full_name"`
 	Sex      string `json:"sex"`
+	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -27,8 +28,9 @@ func (c CreateUser) Validate() error {
 	return validation.ValidateStruct(&c,
 		validation.Field(&c.FullName, validation.Required.Error("Nama harus diisi")),
 		validation.Field(&c.Sex, validation.Required.Error("Jenis kelamin harus diisi")),
-		validation.Field(&c.Email, is.Email),
+		validation.Field(&c.Email, is.Email.Error("Email tidak valid")),
 		validation.Field(&c.Password, validation.Required.Error("Password harus diisi")),
+		validation.Field(&c.Username, validation.Required.Error("Username harus diisi")),
 	)
 }
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/bagasunix/go-clean-architecture/pkg/config"
+	"github.com/bagasunix/go-clean-architecture/pkg/errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,6 +14,12 @@ type BaseResponse[T any] struct {
 	Data    *T            `json:"data,omitempty"`
 	Paging  *PageMetadata `json:"paging,omitempty"`
 	Errors  error         `json:"errors,omitempty"`
+}
+
+func (a *BaseResponse[T]) ToJSON() []byte {
+	j, err := json.Marshal(a)
+	errors.HandlerReturnedVoid(err)
+	return j
 }
 
 type PageMetadata struct {
@@ -31,13 +38,6 @@ func WriteResponse[T any](ctx *fiber.Ctx, cfg *config.Cfg, result any, err error
 	bytes, _ := json.Marshal(result)
 	// Unmarshal JSON ke struct CustomError
 	json.Unmarshal(bytes, &resp)
-	if err != nil {
-		if cfg.Server.Env != "dev" {
-			resp.Data = nil
-		}
-		resp.Errors = err
-		return ctx.Status(resp.Code).JSON(resp)
-	} else {
-		return ctx.Status(resp.Code).JSON(resp)
-	}
+	
+	return ctx.Status(resp.Code).JSON(BaseResponse[T]{Errors: err, Message: resp.Message})
 }

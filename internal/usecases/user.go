@@ -59,6 +59,7 @@ func (u *userUseCase) CreateUser(ctx *fiber.Ctx, req *models.CreateUser) (respon
 	entityBuild := new(entities.User)
 	entityBuild.ID = helpers.GenerateUUIDV4(u.logger)
 	entityBuild.FullName = req.FullName
+	entityBuild.Username = req.Username
 	entityBuild.Sex = intSex
 	entityBuild.Email = req.Email
 	entityBuild.Password = helpers.HashAndSalt([]byte(req.Password))

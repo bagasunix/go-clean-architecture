@@ -22,12 +22,12 @@ type userController struct {
 func (u *userController) CreateUser(ctx *fiber.Ctx) error {
 	request := new(models.CreateUser)
 	if err := ctx.BodyParser(&request); err != nil {
-		u.Log.Error("failed to parse request body", zap.Error(err))
+		// u.Log.Error("failed to parse request body", zap.Error(err))
 		return fiber.ErrBadRequest
 	}
 	resp, err := u.useCase.CreateUser(ctx, request)
 	if err != nil {
-		u.Log.Error(err.Error())
+		// u.Log.Error(err.Error())
 		return models.WriteResponse[models.ResponseUser](ctx, u.Cfg, resp, err)
 	}
 	return models.WriteResponse[models.ResponseUser](ctx, u.Cfg, resp, nil)

@@ -17,6 +17,7 @@ func Run() {
 	defer cancel()
 
 	logger := InitLogger()
+	defer logger.Sync()
 	config := config.InitConfig(ctx, logger)
 	db := InitDb(ctx, logger, config)
 	// repositories := repositories.New(logger, db)
